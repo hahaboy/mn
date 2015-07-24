@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>健康智能提醒</title>
+	<script type="text/javascript" src="data.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		var $head = document.getElementsByTagName('head')[0];
+		function loadData(url, callback) {
+			var s = document.createElement('script');
+			s.type = 'text/javascript';
+			s.async = true;
+			s.charset = 'utf-8';
+			s.onload = function () {
+				//console.log('data loaded');
+				callback();
+				s.onload = null;
+				$head.removeChild(s);
+			};
+			s.src = url;
+			$head.appendChild(s);
+		}
+	</script>
+	<script type="text/javascript">
+		var back = [], neck = [];
+		function init() {
+			var a, line, d;
+			for (a in lines) {
+				line = lines[a], d = line.d;
+				//console.log(d);
+				if (d) {
+					d==='1' && back.push(a);
+					d==='2' && neck.push(a);
+				}
+			}
+		}
+		init();
+		var hqeye = setInterval(function () {
+			loadData(sz300104, function () {
+				var p = parseFloat(hq_str_sz300104.split(',')[3]);    //console.log(p);
+				back.forEach(function (a) {
+					if (p<=lines[a].p1) {
+						clearInterval(hqeye);
+						var t = new Date();
+						console.log('活动肩膀时间到~', a, t.getHours()+':'+t.getMinutes());
+						console.log(lines[a]);
+						alert('活动肩膀时间到~');
+						return false;
+					}
+				});
+				neck.forEach(function (a) {
+					if (p>=lines[a].p2) {
+						clearInterval(hqeye);
+						var t = new Date();
+						console.log('活动颈椎时间到~', a, t.getHours()+':'+t.getMinutes());
+						console.log(lines[a]);
+						alert('活动颈椎时间到~');
+						return false;
+					}
+				});
+			});
+		}, 18000);
+	</script>
+</body>
+</html>
